@@ -44,7 +44,8 @@ export const PianoRollNotes: React.FC<PianoRollNotesProps> = ({
   const handleNoteDragStart = (noteId: string, event: React.MouseEvent | React.TouchEvent, dragType: 'move' | 'resize') => {
     event.preventDefault();
     event.stopPropagation();
-    onNoteDragStart(noteId, event, dragType);
+    const noteIdsToDrag = selectedNotes.has(noteId) && selectedNotes.size > 1 ? selectedNoteIds : [noteId];
+    onNoteDragStart(noteId, event, dragType, noteIdsToDrag);
   };
 
   const createTouchEvent = (touchEvent: React.TouchEvent): React.MouseEvent => {
