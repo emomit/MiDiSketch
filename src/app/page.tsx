@@ -1099,10 +1099,6 @@ export default function Home() {
             } catch {}
           }}
         />
-
-        
-      </div>
-      )}
       </div>
     </div>
   );
