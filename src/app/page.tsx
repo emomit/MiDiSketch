@@ -88,6 +88,7 @@ export default function Home() {
   const [jsonFlash, setJsonFlash] = useState(false);
   const [midiFlash, setMidiFlash] = useState(false);
   const [isBootLoading, setIsBootLoading] = useState(true);
+  const [isBootLoadingExiting, setIsBootLoadingExiting] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
   const [isTrackPanelOpenMobile, setIsTrackPanelOpenMobile] = useState(false);
   const [activeMobileTab, setActiveMobileTab] = useState<'title' | 'audio' | 'length' | 'move' | null>(null);
@@ -348,15 +349,25 @@ export default function Home() {
         if (typeof snapshot?.measures === 'number') setCurrentMeasures(snapshot.measures);
       }
     } catch {}
-    setIsBootLoading(false);
-  }, [authChecked, currentUserId, setAllTracks, setState]);
+    if (isBootLoading) {
+      setIsBootLoadingExiting(true);
+      setTimeout(() => setIsBootLoading(false), 500);
+    }
+  }, [authChecked, currentUserId, setAllTracks, setState, isBootLoading]);
   
   useEffect(() => {
     if (!isBootLoading) return;
-    const t = setTimeout(() => setIsBootLoading(false), 2000);
+    const t = setTimeout(() => {
+      setIsBootLoadingExiting(true);
+      setTimeout(() => setIsBootLoading(false), 500);
+    }, 1000);
     return () => clearTimeout(t);
   }, [isBootLoading]);
-  
+
+  useEffect(() => {
+    setIsBootLoadingExiting(false);
+  }, []);
+ 
   useEffect(() => {
     const onDocDown = (e: Event) => {
       if (!palette.open) return;
@@ -426,14 +437,16 @@ export default function Home() {
 
   return (
     <div>
-      <div className={`min-h-screen bg-slate-900 ${isBootLoading ? 'opacity-100' : 'opacity-100'} transition-opacity duration-200`}>
-      {isBootLoading ? (
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-slate-200 text-sm">読み込み中...</div>
-        </div>
-      ) : (
       <div className="min-h-screen bg-slate-900 flex flex-col">
-        
+        {isBootLoading && (
+          <div className={`fixed inset-0 z-[9999] bg-slate-900 flex items-center justify-center transition-transform duration-500 ease-in-out ${
+            isBootLoadingExiting ? '-translate-x-full' : 'translate-x-0'
+          }`}>
+            <div className="text-white text-6xl md:text-8xl font-bold tracking-wider">
+              MiDiSketch
+            </div>
+          </div>
+        )}
         <div className="hidden md:flex bg-slate-800 rounded-br-lg overflow-visible whitespace-nowrap"> 
           
           <div>
