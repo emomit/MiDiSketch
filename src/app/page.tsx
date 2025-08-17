@@ -439,7 +439,7 @@ export default function Home() {
     <div>
       <div className="min-h-screen bg-slate-900 flex flex-col">
         {isBootLoading && (
-          <div className={`fixed inset-0 z-[9999] bg-slate-900 flex items-center justify-center transition-transform duration-500 ease-in-out ${
+          <div className={`fixed inset-0 z-[10013] bg-slate-900 flex items-center justify-center transition-transform duration-500 ease-in-out ${
             isBootLoadingExiting ? '-translate-x-full' : 'translate-x-0'
           }`}>
             <div className="text-white text-6xl md:text-8xl font-bold tracking-wider">
