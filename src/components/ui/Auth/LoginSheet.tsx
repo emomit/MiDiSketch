@@ -41,10 +41,11 @@ export const LoginSheet: React.FC<LoginSheetProps> = ({ isOpen, onClose }) => {
     setError(null);
     setMessage(null);
     const supabase = getSupabaseClient();
+    const redirectUrl = process.env.NEXT_PUBLIC_SITE_URL || (typeof window !== 'undefined' ? window.location.origin : undefined);
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: { emailRedirectTo: typeof window !== 'undefined' ? window.location.origin : undefined },
+      options: { emailRedirectTo: redirectUrl },
     });
     setLoading(false);
     if (error) {
