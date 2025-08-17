@@ -23,6 +23,7 @@ MiDiSketch
 
  ログインはこちらのデモ用アカウントでテストできます:
  メール(crusted-gimmes9f@icloud.com)
+
  パスワード(Miditest1)
 
 動作動画（PC・モバイル）  
