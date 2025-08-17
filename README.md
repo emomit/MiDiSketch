@@ -19,7 +19,10 @@ MiDiSketch
 ### デモ・動画
 
 実際に動作するVercelデプロイ版  
-🔗 [MiDiSketch デモ](https://midi-sketch.vercel.app)
+ [MiDiSketch デモ](https://midi-sketch.vercel.app)
+ ログインはこちらのデモ用アカウントでテストできます:
+ メール(crusted-gimmes9f@icloud.com)
+ パスワード(Miditest1)
 
 動作動画（PC・モバイル）  
 [PC版](https://youtu.be/1WXMq6ymIxY?si=e-v7YGZzEDDn_xan) 
