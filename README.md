@@ -16,18 +16,26 @@ MiDiSketch
 この問題を解決するため、ブラウザ上で簡単にコード入力やメロディ作成ができるMIDIエディタを制作しました。  
 外出先でも直感的に操作でき、思いついた音楽のアイデアをすぐ形にできる環境を目指しています。
 
+### 制作期間
+約2週間
+- 1〜3日目: ピアノロールUI・基本機能作成
+- 4〜10日目: ノート配置、コード精製機能、クラウド機能追加
+- 11〜14日目: モバイル対応、バグ修正
+
 ### デモ・動画
 
 実際に動作するVercelデプロイ版  
  [MiDiSketch デモ](https://midi-sketch.vercel.app)
 
  ログインはこちらのデモ用アカウントでテストできます:
- メール(crusted-gimmes9f@icloud.com)
+ 
+メール(crusted-gimmes9f@icloud.com)
 
  パスワード(Miditest1)
 
 動作動画（PC・モバイル）  
 [PC版](https://youtu.be/1WXMq6ymIxY?si=e-v7YGZzEDDn_xan) 
+
 [モバイル版](https://youtube.com/shorts/rZJK1CjN6gE?si=Qcr9j75iLAXPHFdx)
 
 ### 動作環境
