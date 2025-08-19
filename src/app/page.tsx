@@ -824,7 +824,7 @@ export default function Home() {
           
             {isTrackPanelOpenMobile && (
               <div
-                className="md:hidden fixed inset-0 top-[56px] bg-black/40 z-[10005]"
+                className="md:hidden fixed inset-0 bg-black/40 z-[10005]"
                 onClick={() => setIsTrackPanelOpenMobile(false)}
               />
             )}

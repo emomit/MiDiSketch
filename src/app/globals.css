@@ -38,6 +38,9 @@ input, textarea, [contenteditable="true"], .allow-selection {
 .material-symbols-outlined.icon-base { font-size: 16px; line-height: 1; }
 .material-symbols-outlined.icon-lg { font-size: 20px; line-height: 1; }
 
+.material-symbols-outlined { visibility: hidden; }
+.icons-ready .material-symbols-outlined { visibility: visible; }
+
 .volume-slider {
   -webkit-appearance: none;
   appearance: none;

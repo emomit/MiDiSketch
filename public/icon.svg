@@ -1,0 +1,58 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="32" fill="#1f2937"/>
+  
+  <!-- Piano roll - larger with less margin -->
+  <rect x="64" y="64" width="384" height="384" rx="8" fill="#374151"/>
+  
+  <!-- Piano roll grid - alternating rows -->
+  <rect x="64" y="64" width="384" height="48" fill="#4b5563"/>
+  <rect x="64" y="112" width="384" height="48" fill="#6b7280"/>
+  <rect x="64" y="160" width="384" height="48" fill="#4b5563"/>
+  <rect x="64" y="208" width="384" height="48" fill="#6b7280"/>
+  <rect x="64" y="256" width="384" height="48" fill="#4b5563"/>
+  <rect x="64" y="304" width="384" height="48" fill="#6b7280"/>
+  <rect x="64" y="352" width="384" height="48" fill="#4b5563"/>
+  <rect x="64" y="400" width="384" height="48" fill="#6b7280"/>
+  
+  <!-- Vertical grid lines -->
+  <rect x="112" y="64" width="2" height="384" fill="#9ca3af"/>
+  <rect x="160" y="64" width="2" height="384" fill="#9ca3af"/>
+  <rect x="208" y="64" width="2" height="384" fill="#9ca3af"/>
+  <rect x="256" y="64" width="2" height="384" fill="#9ca3af"/>
+  <rect x="304" y="64" width="2" height="384" fill="#9ca3af"/>
+  <rect x="352" y="64" width="2" height="384" fill="#9ca3af"/>
+  <rect x="400" y="64" width="2" height="384" fill="#9ca3af"/>
+  
+  <!-- Notes filling grid cells -->
+  <!-- Note 1 - fills entire grid cell -->
+  <rect x="112" y="112" width="48" height="48" fill="#10b981" rx="2"/>
+  
+  <!-- Note 2 - fills entire grid cell -->
+  <rect x="208" y="160" width="48" height="48" fill="#3b82f6" rx="2"/>
+  
+  <!-- Note 3 - fills entire grid cell -->
+  <rect x="256" y="208" width="48" height="48" fill="#f59e0b" rx="2"/>
+  
+  <!-- Note 4 - fills entire grid cell -->
+  <rect x="304" y="256" width="48" height="48" fill="#ef4444" rx="2"/>
+  
+  <!-- Note 5 - fills entire grid cell -->
+  <rect x="160" y="304" width="48" height="48" fill="#8b5cf6" rx="2"/>
+  
+  <!-- Note 6 - fills entire grid cell -->
+  <rect x="352" y="352" width="48" height="48" fill="#06b6d4" rx="2"/>
+  
+  <!-- Chord menu - moved to top right to avoid overlap -->
+  <!-- Center gray button -->
+  <circle cx="400" cy="112" r="20" fill="#6b7280"/>
+  
+  <!-- Expanding colored buttons (cross pattern) - larger -->
+  <!-- Top button -->
+  <circle cx="400" cy="64" r="16" fill="#ef4444"/>
+  <!-- Right button -->
+  <circle cx="448" cy="112" r="16" fill="#10b981"/>
+  <!-- Bottom button -->
+  <circle cx="400" cy="160" r="16" fill="#3b82f6"/>
+  <!-- Left button -->
+  <circle cx="352" cy="112" r="16" fill="#f59e0b"/>
+</svg>
