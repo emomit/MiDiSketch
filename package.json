@@ -9,7 +9,10 @@
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,css,md}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,css,md}\""
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,css,md}\"",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.54.0",
@@ -22,7 +25,8 @@
     "react-window": "^1.8.11",
     "react-window-infinite-loader": "^1.0.10",
     "uuid": "^11.1.0",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -30,12 +34,15 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitest/ui": "^3.2.4",
     "eslint": "^9",
     "eslint-config-next": "15.4.5",
+    "jsdom": "^26.1.0",
     "prettier": "^3.3.3",
     "sharp": "^0.34.3",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^3.2.4"
   },
   "prettier": {
     "singleQuote": true,

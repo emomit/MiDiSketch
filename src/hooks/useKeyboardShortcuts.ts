@@ -1,92 +1,107 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
+import { Note } from '../types/note';
+import { quantize, TPB } from '../utils/timeUtils';
 
 interface KeyboardShortcutsProps {
+  notes: Note[];
   selectedNotes: Set<string>;
-  deleteMultipleNotes: (noteIds: string[]) => void;
-  clearSelection: () => void;
+  onUpdateNotes: (updates: Array<{ noteId: string; updates: any }>) => void;
+  onDeleteNotes: (noteIds: string[]) => void;
+  onSelectAll: () => void;
+  onClearSelection: () => void;
   onUndo?: () => void;
   onRedo?: () => void;
-  onCopy?: () => void;
-  onPaste?: () => void;
-  onSelectAll?: () => void;
+  quantum: number;
+  cellWidth: number;
 }
 
 export const useKeyboardShortcuts = ({
+  notes,
   selectedNotes,
-  deleteMultipleNotes,
-  clearSelection,
+  onUpdateNotes,
+  onDeleteNotes,
+  onSelectAll,
+  onClearSelection,
   onUndo,
   onRedo,
-  onCopy,
-  onPaste,
-  onSelectAll
+  quantum,
+  cellWidth
 }: KeyboardShortcutsProps) => {
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      const isCtrlOrCmd = e.ctrlKey || e.metaKey;
-      
-      if ((e.key === 'Delete' || e.key === 'Backspace') && selectedNotes.size > 0) {
-        e.preventDefault();
-        const selectedNoteIds = Array.from(selectedNotes);
-        deleteMultipleNotes(selectedNoteIds);
-        clearSelection();
-        return;
-      }
-      
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        clearSelection();
-        return;
-      }
-      
-      // Ctrl/Cmd + Z: Undo
-      if (isCtrlOrCmd && e.key === 'z' && onUndo) {
-        e.preventDefault();
-        onUndo();
-        return;
-      }
-      
-      // Ctrl/Cmd + Y: Redo
-      if (isCtrlOrCmd && e.key === 'y' && onRedo) {
-        e.preventDefault();
-        onRedo();
-        return;
-      }
-      
-      // Ctrl/Cmd + C: Copy
-      if (isCtrlOrCmd && e.key === 'c' && onCopy) {
-        e.preventDefault();
-        onCopy();
-        return;
-      }
-      
-      // Ctrl/Cmd + V: Paste
-      if (isCtrlOrCmd && e.key === 'v' && onPaste) {
-        e.preventDefault();
-        onPaste();
-        return;
-      }
-      
-      // Ctrl/Cmd + A: Select All
-      if (isCtrlOrCmd && e.key === 'a' && onSelectAll) {
-        e.preventDefault();
-        onSelectAll();
-        return;
-      }
-    };
+  
+  const getSelectedNoteIds = useCallback(() => {
+    return Array.from(selectedNotes);
+  }, [selectedNotes]);
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [
-    selectedNotes, 
-    deleteMultipleNotes, 
-    clearSelection, 
-    onUndo, 
-    onRedo, 
-    onCopy, 
-    onPaste, 
-    onSelectAll
-  ]);
+  const getSelectedNotes = useCallback(() => {
+    return notes.filter(note => selectedNotes.has(note.id));
+  }, [notes, selectedNotes]);
+
+
+
+
+
+  const deleteSelected = useCallback(() => {
+    const selectedNoteIds = getSelectedNoteIds();
+    if (selectedNoteIds.length > 0) {
+      onDeleteNotes(selectedNoteIds);
+    }
+  }, [getSelectedNoteIds, onDeleteNotes]);
+
+  const handleKeyDown = useCallback((event: KeyboardEvent) => {
+    // フォーム要素がフォーカスされている場合は無視
+    if (event.target instanceof HTMLInputElement || 
+        event.target instanceof HTMLTextAreaElement || 
+        event.target instanceof HTMLSelectElement) {
+      return;
+    }
+
+    const quantumTicks = quantum * TPB / 16; // 量子化グリッドをtickに変換
+
+    switch (event.key) {
+      case 'Delete':
+      case 'Backspace':
+        event.preventDefault();
+        deleteSelected();
+        break;
+
+
+
+
+
+      case 'a':
+        if (event.ctrlKey || event.metaKey) {
+          event.preventDefault();
+          onSelectAll();
+        }
+        break;
+
+      case 'Escape':
+        event.preventDefault();
+        onClearSelection();
+        break;
+
+      case 'z':
+        if (event.ctrlKey || event.metaKey) {
+          event.preventDefault();
+          onUndo?.();
+        }
+        break;
+
+      case 'y':
+        if (event.ctrlKey || event.metaKey) {
+          event.preventDefault();
+          onRedo?.();
+        }
+        break;
+    }
+  }, [quantum, deleteSelected, onSelectAll, onClearSelection, onUndo, onRedo]);
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
+
+  return {
+    deleteSelected
+  };
 }; 

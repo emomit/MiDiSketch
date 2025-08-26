@@ -1,4 +1,5 @@
 import React from 'react';
+import type { Track } from '../../types/track';
 
 interface PianoRollSelectionProps {
   selectionStart: { row: number; col: number } | null;
@@ -6,6 +7,8 @@ interface PianoRollSelectionProps {
   isSelecting: boolean;
   cellWidth: number;
   cellHeight: number;
+  tracks: Track[];
+  selectedTrackId: string;
 }
 
 export const PianoRollSelection: React.FC<PianoRollSelectionProps> = ({
@@ -13,7 +16,9 @@ export const PianoRollSelection: React.FC<PianoRollSelectionProps> = ({
   selectionEnd,
   isSelecting,
   cellWidth,
-  cellHeight
+  cellHeight,
+  tracks,
+  selectedTrackId
 }) => {
   if (!isSelecting || !selectionStart || !selectionEnd) return null;
 
@@ -21,6 +26,11 @@ export const PianoRollSelection: React.FC<PianoRollSelectionProps> = ({
   const top = Math.min(selectionStart.row, selectionEnd.row) * cellHeight;
   const width = (Math.abs(selectionEnd.col - selectionStart.col) + 1) * cellWidth;
   const height = (Math.abs(selectionEnd.row - selectionStart.row) + 1) * cellHeight;
+
+  // 選択中のトラックの色を取得
+  const selectedTrack = tracks.find(track => track.id === selectedTrackId);
+  const borderColor = selectedTrack?.color || '#22c55e';
+  const backgroundColor = `${borderColor}10`;
 
   return (
     <div
@@ -31,8 +41,8 @@ export const PianoRollSelection: React.FC<PianoRollSelectionProps> = ({
         width: `${width}px`,
         height: `${height}px`,
         zIndex: 15,
-        borderColor: '#22c55e',
-        backgroundColor: '#22c55e10',
+        borderColor,
+        backgroundColor,
       }}
     />
   );

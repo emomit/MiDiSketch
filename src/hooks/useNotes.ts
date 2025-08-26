@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { Note, NoteUpdate } from '../types/note';
 import { getNoteName } from '../utils/noteUtils';
 import { useHistory } from './useHistory';
+import { quantize, TPB } from '../utils/timeUtils';
 
 export const useNotes = (
     cellsPerMeasure: number = 16,
@@ -241,6 +242,10 @@ export const useNotes = (
         }
 
         const allSelectedIds = selectedNoteIds.length > 0 ? selectedNoteIds : [noteId];
+        // 選択状態を確実に更新
+        if (allSelectedIds.length > 0) {
+            setSelectedNotes(new Set(allSelectedIds));
+        }
         const relativePositions = allSelectedIds.length > 1 
             ? calculateRelativePositions(allSelectedIds, noteId)
             : new Map();
@@ -292,9 +297,12 @@ export const useNotes = (
 
             const newStartTime = Math.max(0, s.originalNote.startTime + deltaTime);
             const newPitch = Math.max(21, Math.min(108, s.originalNote.pitch + deltaPitch));
+            
+            // 量子化を適用
+            const quantizedStartTime = quantize(newStartTime * TPB / 16, TPB / 16) / (TPB / 16);
 
             if (
-                s.currentNote.startTime === newStartTime &&
+                s.currentNote.startTime === quantizedStartTime &&
                 s.currentNote.pitch === newPitch
             ) {
                 return;
@@ -302,18 +310,18 @@ export const useNotes = (
 
             setDragState(prev => {
                 if (!prev.currentNote) return prev;
-                if (prev.currentNote.startTime === newStartTime && prev.currentNote.pitch === newPitch) {
+                if (prev.currentNote.startTime === quantizedStartTime && prev.currentNote.pitch === newPitch) {
                     return prev;
                 }
                 return {
                     ...prev,
                     currentNote: {
                         ...prev.currentNote,
-                        startTime: newStartTime,
+                        startTime: quantizedStartTime,
                         pitch: newPitch,
                         noteName: getNoteName(newPitch),
-                        measure: Math.floor(newStartTime / cellsPerMeasureRef.current) + 1,
-                        beat: (newStartTime % cellsPerMeasureRef.current) + 1
+                        measure: Math.floor(quantizedStartTime / cellsPerMeasureRef.current) + 1,
+                        beat: (quantizedStartTime % cellsPerMeasureRef.current) + 1
                     }
                 };
             });
@@ -406,6 +414,9 @@ export const useNotes = (
         }
 
         if (endDragBehaviorRef.current === 'copy' || endDragBehaviorRef.current === 'cancel') {
+            // キャンセルやコピーの場合も選択状態を保持
+            const selectedNoteIds = dragState.selectedNoteIds;
+            
             setDragState({
                 isDragging: false,
                 noteId: null,
@@ -417,6 +428,12 @@ export const useNotes = (
                 selectedNoteIds: [],
                 relativePositions: new Map()
             });
+            
+            // 選択状態を更新（複数選択の場合）
+            if (selectedNoteIds.length > 0) {
+                setSelectedNotes(new Set(selectedNoteIds));
+            }
+            
             endDragBehaviorRef.current = 'move';
             return;
         }
@@ -445,6 +462,9 @@ export const useNotes = (
             if (updates.length) updateMultipleNotes(updates);
         }
 
+        // ドラッグ終了時に選択状態を保持
+        const selectedNoteIds = dragState.selectedNoteIds;
+        
         setDragState({
             isDragging: false,
             noteId: null,
@@ -456,8 +476,20 @@ export const useNotes = (
             selectedNoteIds: [],
             relativePositions: new Map()
         });
+        
+        // 選択状態を更新（dragState.selectedNoteIdsが空の場合は現在の選択状態を保持）
+        if (selectedNoteIds.length > 0) {
+            setSelectedNotes(new Set(selectedNoteIds));
+        } else {
+            // dragState.selectedNoteIdsが空の場合は、現在の選択状態をそのまま保持
+            // この処理は不要だが、念のため明示的に記述
+        }
 
+        // 非同期で選択状態を確実に更新
         setTimeout(() => {
+            if (selectedNoteIds.length > 0) {
+                setSelectedNotes(new Set(selectedNoteIds));
+            }
             saveState(notes);
             options?.onCommit?.();
         }, 50);

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { FontLoader } from "../components/FontLoader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -50,11 +51,11 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet" />
-        <script dangerouslySetInnerHTML={{ __html: "try{if(document.fonts){document.fonts.load('24px \"Material Symbols Outlined\"').then(function(){document.documentElement.classList.add('icons-ready');});}}catch(e){}" }} />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <FontLoader />
         {children}
       </body>
     </html>

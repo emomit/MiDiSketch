@@ -8,6 +8,7 @@ import { useBPM } from "../hooks/useBPM";
 import { Track } from "../types/track";
 import type { Note } from "../types/note";
 import { downloadMIDI } from "../utils/midiExport";
+import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
 import { LoginSheet } from "../components/ui/Auth/LoginSheet";
 import { InlineRename } from "../components/ui/InlineRename";
 import { ColorPalette } from "../components/ui/ColorPalette";
@@ -112,8 +113,31 @@ export default function Home() {
   const [lengthSlider, setLengthSlider] = useState<number>(1);
   const [lengthInput, setLengthInput] = useState<number>(1);
   
-  
-
+  // キーボードショートカット機能
+  useKeyboardShortcuts({
+    notes: currentNotes,
+    selectedNotes,
+    onUpdateNotes: (updates) => {
+      // ノート更新処理
+      const updatedNotes = currentNotes.map(note => {
+        const update = updates.find(u => u.noteId === note.id);
+        return update ? { ...note, ...update.updates } : note;
+      });
+      setCurrentNotes(updatedNotes);
+    },
+    onDeleteNotes: (noteIds) => {
+      setCurrentNotes(prev => prev.filter(note => !noteIds.includes(note.id)));
+      setSelectedNotes(new Set());
+    },
+    onSelectAll: () => {
+      setSelectedNotes(new Set(currentNotes.map(note => note.id)));
+    },
+    onClearSelection: () => {
+      setSelectedNotes(new Set());
+    },
+    quantum: 1, // 1セル分の量子化
+    cellWidth: 40
+  });
 
   const lastAppliedTransposeRef = useRef<number>(0);
   useEffect(() => {
@@ -195,13 +219,18 @@ export default function Home() {
           setIsProjectPickerOpen(v => !v);
           return;
         }
-        if (key === 'm') {
+        if (key === 'm' && !e.metaKey) {
+          // Mキーはミュート機能（既存の処理）
+          return;
+        }
+        if (key === 'm' && e.metaKey) {
           e.preventDefault();
-          downloadMIDI(s.currentNotes, 'piano-roll.mid', s.bpmState.bpm, 4);
+          downloadMIDI(s.currentNotes, 'piano-roll.mid');
           setMidiFlash(true);
           setTimeout(() => setMidiFlash(false), 800);
           return;
         }
+
         if (key === 'j') {
           e.preventDefault();
           const snapshot = buildProjectSnapshot({
@@ -474,9 +503,7 @@ export default function Home() {
               onClick={() => {
                 downloadMIDI(
                   currentNotes,
-                  'piano-roll.mid',
-                  bpmState.bpm,
-                  4
+                  'piano-roll.mid'
                 );
                 setMidiFlash(true);
                 setTimeout(() => setMidiFlash(false), 800);
@@ -964,7 +991,7 @@ export default function Home() {
                         
                         <div className="mt-3 flex items-center">
                           <div className="flex items-center gap-2">
-                            <button className={`w-10 h-10 rounded flex items-center justify-center transition-colors duration-150 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800 ${midiFlash ? 'bg-indigo-600' : 'bg-slate-700 hover:bg-slate-600'} text-white`} onClick={() => { downloadMIDI(currentNotes, 'piano-roll.mid', bpmState.bpm, 4); setMidiFlash(true); setTimeout(() => setMidiFlash(false), 800); }}>
+                            <button className={`w-10 h-10 rounded flex items-center justify-center transition-colors duration-150 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800 ${midiFlash ? 'bg-indigo-600' : 'bg-slate-700 hover:bg-slate-600'} text-white`} onClick={() => { downloadMIDI(currentNotes, 'piano-roll.mid'); setMidiFlash(true); setTimeout(() => setMidiFlash(false), 800); }}>
                               <span className="material-symbols-outlined text-base">audio_file</span>
                             </button>
                             <button className={`w-10 h-10 rounded flex items-center justify-center transition-colors duration-150 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800 ${jsonFlash ? 'bg-orange-500' : 'bg-slate-700 hover:bg-slate-600'} text-white`} onClick={() => { const snapshot = buildProjectSnapshot({ name: projectName, tracks, notes: currentNotes, bpmState, selectedTrackId, measures: currentMeasures }); downloadJson(snapshot, `${projectName || 'project'}.json`); setJsonFlash(true); setTimeout(() => setJsonFlash(false), 800); }}>

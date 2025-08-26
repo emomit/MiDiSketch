@@ -302,8 +302,10 @@ export const PianoRoll: React.FC<PianoRollProps> = ({ tracks, selectedTrackId, o
 
   const handleNoteDragStart = useCallback((noteId: string, event: React.MouseEvent | React.TouchEvent, dragType: 'move' | 'resize', selectedNoteIds?: string[]) => {
     setEndDragBehavior(event.shiftKey ? 'copy' : 'move');
-    startDrag(noteId, event, dragType, selectedNoteIds);
-  }, [startDrag, setEndDragBehavior]);
+    // selectedNoteIdsが渡されていない場合は、現在の選択状態から取得
+    const currentSelectedIds = selectedNoteIds || Array.from(selectedNotes);
+    startDrag(noteId, event, dragType, currentSelectedIds);
+  }, [startDrag, setEndDragBehavior, selectedNotes]);
 
   const handleCellClick = useCallback((cellId: string) => {
     const [, rowStr, colStr] = cellId.split('-');
@@ -549,12 +551,16 @@ export const PianoRoll: React.FC<PianoRollProps> = ({ tracks, selectedTrackId, o
   }, [dragState.isDragging, gridConfig.cellHeight, playNote, getDragSnapshot, createNote, setEndDragBehavior, isLongPressMode]);
 
   useKeyboardShortcuts({
+    notes,
     selectedNotes,
-    deleteMultipleNotes,
-    clearSelection,
+    onUpdateNotes: updateMultipleNotes,
+    onDeleteNotes: deleteMultipleNotes,
+    onSelectAll: () => selectAllNotes(notes),
+    onClearSelection: clearSelection,
     onUndo: handleUndo,
     onRedo: handleRedo,
-    onSelectAll: () => selectAllNotes(notes)
+    quantum: 1,
+    cellWidth: gridConfig.cellWidth
   });
 
   const applyNoteUpdates = useCallback((updates: Array<{ id: string; startTime: number }>) => {
@@ -803,6 +809,8 @@ export const PianoRoll: React.FC<PianoRollProps> = ({ tracks, selectedTrackId, o
           isSelecting={isSelecting}
           cellWidth={gridConfig.cellWidth}
           cellHeight={gridConfig.cellHeight}
+          tracks={tracks}
+          selectedTrackId={selectedTrackId}
         />
 
         
